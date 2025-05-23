@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Calculator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #2f07c0, #091dce);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Poppins', sans-serif;
+  }
+  .heading{
+    align-content: flex-start;
+    margin-top: -600px;
+    margin-right: -250px;
+    color: red;
+  }
+
+  .calculator {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(118, 75, 162, 0.6);
+    padding: 25px;
+    width: 320px;
+    margin-top: 50px;
+  }
+
+  .display {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    color: #2b2b2b;
+    font-weight: 600;
+    font-size: 2.6rem;
+    padding: 15px 20px;
+    text-align: right;
+    user-select: none;
+    box-shadow: inset 4px 4px 8px rgba(255,255,255,0.8),
+      inset -4px -4px 8px rgba(0,0,0,0.15);
+    margin-bottom: 20px;
+    min-height: 50px;
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+
+  button {
+    font-size: 1.4rem;
+    border: none;
+    border-radius: 12px;
+    padding: 18px 0;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 6px 12px rgba(118, 75, 162, 0.3);
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+    user-select: none;
+  }
+
+  button:focus {
+    outline: none;
+  }
+
+  /* Number buttons */
+  button.number {
+    background: #764ba2;
+    box-shadow: 0 6px 15px rgba(118, 75, 162, 0.6);
+  }
+
+  button.number:hover {
+    background: #8a62bd;
+  }
+
+  button.number:active {
+    background: #5a358a;
+    transform: scale(0.95);
+  }
+
+  /* Operator buttons */
+  button.operator {
+    background: #ffa726;
+    color: #2b2b2b;
+    box-shadow: 0 6px 15px rgba(255, 167, 38, 0.7);
+  }
+
+  button.operator:hover {
+    background: #ffb74d;
+  }
+
+  button.operator:active {
+    background: #cc8400;
+    transform: scale(0.95);
+  }
+
+  /* Special buttons */
+  button.clear {
+    background: #ef5350;
+    box-shadow: 0 6px 15px rgba(239, 83, 80, 0.7);
+  }
+
+  button.clear:hover {
+    background: #f56c6c;
+  }
+
+  button.clear:active {
+    background: #c43d3b;
+    transform: scale(0.95);
+  }
+
+  button.equal {
+    background: #66bb6a;
+    box-shadow: 0 6px 15px rgba(102, 187, 106, 0.7);
+    grid-column: span 2;
+  }
+
+  button.equal:hover {
+    background: #81c784;
+  }
+
+  button.equal:active {
+    background: #4a8a4f;
+    transform: scale(0.95);
+  }
+
+  /* Delete button */
+  button.delete {
+    background: #29b6f6;
+    box-shadow: 0 6px 15px rgba(41, 182, 246, 0.7);
+  }
+
+  button.delete:hover {
+    background: #53c0fc;
+  }
+
+  button.delete:active {
+    background: #1a8fd0;
+    transform: scale(0.95);
+  }
+
+  @media (max-width: 360px) {
+    .calculator {
+      width: 90vw;
+      padding: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="heading">
+    <h1>CALCULATOR</h1>
+  </div>
+  <div class="calculator" role="application" aria-label="Calculator">
+    <div class="display" id="display" aria-live="polite" aria-atomic="true">0</div>
+    <div class="buttons">
+      <button class="clear" id="clearBtn" aria-label="Clear">C</button>
+      <button class="delete" id="deleteBtn" aria-label="Delete last character">⌫</button>
+      <button class="operator" data-operator="/" aria-label="Divide">÷</button>
+      <button class="operator" data-operator="*" aria-label="Multiply">×</button>
+
+      <button class="number" data-number="7" aria-label="Seven">7</button>
+      <button class="number" data-number="8" aria-label="Eight">8</button>
+      <button class="number" data-number="9" aria-label="Nine">9</button>
+      <button class="operator" data-operator="-" aria-label="Minus">−</button>
+
+      <button class="number" data-number="4" aria-label="Four">4</button>
+      <button class="number" data-number="5" aria-label="Five">5</button>
+      <button class="number" data-number="6" aria-label="Six">6</button>
+      <button class="operator" data-operator="+" aria-label="Plus">+</button>
+
+      <button class="number" data-number="1" aria-label="One">1</button>
+      <button class="number" data-number="2" aria-label="Two">2</button>
+      <button class="number" data-number="3" aria-label="Three">3</button>
+      <button class="equal" id="equalBtn" aria-label="Equals">=</button>
+
+      <button class="number" data-number="0" style="grid-column: span 2;" aria-label="Zero">0</button>
+      <button class="number" data-number="." aria-label="Decimal point">.</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const display = document.getElementById('display');
+      let currentInput = '';
+      let lastInputWasOperator = false;
+
+      function updateDisplay() {
+        display.textContent = currentInput || '0';
+      }
+
+      function appendNumber(number) {
+        if (number === '.' && currentInput.endsWith('.')) {
+          return; // Prevent multiple decimals in sequence
+        }
+        if (number === '.') {
+          // Prevent multiple decimals in the current number segment
+          const tokens = currentInput.split(/[\+\-\*\/]/);
+          const lastToken = tokens[tokens.length - 1];
+          if (lastToken.includes('.')) return;
+        }
+        currentInput += number;
+        lastInputWasOperator = false;
+        updateDisplay();
+      }
+
+      function appendOperator(operator) {
+        if (!currentInput) {
+          // Prevent operator as first character except minus for negative
+          if (operator === '-') {
+            currentInput = '-';
+            updateDisplay();
+          }
+          return;
+        }
+        // Prevent two operators in a row
+        if (lastInputWasOperator) {
+          // replace operator with new one
+          currentInput = currentInput.slice(0, -1) + operator;
+          updateDisplay();
+          return;
+        }
+        currentInput += operator;
+        lastInputWasOperator = true;
+        updateDisplay();
+      }
+
+      function clearAll() {
+        currentInput = '';
+        lastInputWasOperator = false;
+        updateDisplay();
+      }
+
+      function deleteLast() {
+        if (!currentInput) return;
+        const lastChar = currentInput.slice(-1);
+        currentInput = currentInput.slice(0, -1);
+        if (['+', '-', '*', '/'].includes(lastChar)) {
+          lastInputWasOperator = false;
+        }
+        updateDisplay();
+      }
+
+      function calculate() {
+        if (!currentInput) return;
+        // Prevent ending with operator
+        if (lastInputWasOperator) {
+          currentInput = currentInput.slice(0, -1);
+        }
+
+        try {
+          // Evaluate the expression safely without using eval
+          const result = evaluateExpression(currentInput);
+          currentInput = String(result);
+          lastInputWasOperator = false;
+          updateDisplay();
+        } catch (e) {
+          currentInput = '';
+          display.textContent = 'Error';
+        }
+      }
+
+      // Shunting-yard algorithm + expression evaluation
+      function evaluateExpression(expr) {
+        // Tokenize the expression: numbers and operators
+        const tokens = [];
+        let numberBuffer = '';
+
+        for (let char of expr) {
+          if ('0123456789.'.includes(char)) {
+            numberBuffer += char;
+          } else if ('+-*/'.includes(char)) {
+            if (numberBuffer === '' && char === '-' && (tokens.length === 0 || '+-*/'.includes(tokens[tokens.length-1]))) {
+              // negative number
+              numberBuffer = '-';
+            } else {
+              if (numberBuffer !== '') {
+                tokens.push(numberBuffer);
+                numberBuffer = '';
+              }
+              tokens.push(char);
+            }
+          }
+        }
+        if (numberBuffer !== '') tokens.push(numberBuffer);
+
+        // Operators precedence
+        const precedence = {'+': 1, '-': 1, '*': 2, '/': 2};
+
+        // Shunting Yard to convert infix to postfix (RPN)
+        const outputQueue = [];
+        const operatorStack = [];
+
+        for (let token of tokens) {
+          if (!isNaN(token)) {
+            outputQueue.push(parseFloat(token));
+          } else if ('+-*/'.includes(token)) {
+            while (operatorStack.length > 0) {
+              let top = operatorStack[operatorStack.length - 1];
+              if ('+-*/'.includes(top) && precedence[top] >= precedence[token]) {
+                outputQueue.push(operatorStack.pop());
+              } else {
+                break;
+              }
+            }
+            operatorStack.push(token);
+          }
+        }
+
+        while (operatorStack.length > 0) {
+          outputQueue.push(operatorStack.pop());
+        }
+
+        // Evaluate RPN
+        const stack = [];
+        for (let token of outputQueue) {
+          if (typeof token === 'number') {
+            stack.push(token);
+          } else {
+            if (stack.length < 2) throw new Error('Invalid Expression');
+            const b = stack.pop();
+            const a = stack.pop();
+            switch (token) {
+              case '+': stack.push(a + b); break;
+              case '-': stack.push(a - b); break;
+              case '*': stack.push(a * b); break;
+              case '/': 
+                if (b === 0) throw new Error('Division by zero');
+                stack.push(a / b); 
+                break;
+              default: throw new Error('Unknown operator');
+            }
+          }
+        }
+
+        if (stack.length !== 1) throw new Error('Invalid Expression');
+        return +stack[0].toFixed(10); // limit decimals
+      }
+
+      // Attach event listeners
+      document.querySelectorAll('button.number').forEach(btn => {
+        btn.addEventListener('click', () => {
+          appendNumber(btn.dataset.number);
+        });
+      });
+
+      document.querySelectorAll('button.operator').forEach(btn => {
+        btn.addEventListener('click', () => {
+          appendOperator(btn.dataset.operator);
+        });
+      });
+
+      document.getElementById('clearBtn').addEventListener('click', clearAll);
+      document.getElementById('deleteBtn').addEventListener('click', deleteLast);
+      document.getElementById('equalBtn').addEventListener('click', calculate);
+
+      // Keyboard support
+      window.addEventListener('keydown', e => {
+        if ((e.key >= '0' && e.key <= '9') || e.key === '.') {
+          appendNumber(e.key);
+        } else if ('+-*/'.includes(e.key)) {
+          appendOperator(e.key);
+          e.preventDefault();
+        } else if (e.key === 'Enter') {
+          calculate();
+          e.preventDefault();
+        } else if (e.key === 'Backspace') {
+          deleteLast();
+          e.preventDefault();
+        } else if (e.key === 'Escape') {
+          clearAll();
+          e.preventDefault();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
