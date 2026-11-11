@@ -10,15 +10,16 @@ let lastAnswer = 0;
 let angleMode = "DEG";
 let history = [];
 
-const operators = ["+", "-", "*", "/", "^"];
-
 function updateDisplay() {
-    expressionDisplay.textContent = expression || " ";
+    expressionDisplay.textContent = expression || "";
     angleModeDisplay.textContent = angleMode;
+
+    const angleButton = document.querySelector('[data-action="angle"]');
+    if (angleButton) angleButton.textContent = angleMode;
 }
 
 function insertValue(value) {
-    if (resultDisplay.textContent === "Error" && !expression) {
+    if (resultDisplay.textContent === "Error") {
         resultDisplay.textContent = "0";
     }
 
@@ -37,57 +38,85 @@ function deleteLast() {
     updateDisplay();
 }
 
-function factorial(n) {
-    if (!Number.isInteger(n) || n < 0 || n > 170) {
+function factorial(number) {
+    if (!Number.isInteger(number) || number < 0 || number > 170) {
         throw new Error("Invalid factorial");
     }
 
-    let result = 1;
-    for (let i = 2; i <= n; i++) result *= i;
-    return result;
+    let answer = 1;
+
+    for (let i = 2; i <= number; i++) {
+        answer *= i;
+    }
+
+    return answer;
 }
 
 function tokenize(input) {
     const tokens = [];
-    const pattern = /\s*(?:(\d+(?:\.\d*)?|\.\d+)(?:[eE]([+-]?\d+))?|([A-Za-z]+)|(\.\.\.|.) )/y;
+    let index = 0;
 
-    let i = 0;
+    while (index < input.length) {
+        const remaining = input.slice(index);
 
-    while (i < input.length) {
-        if (/\s/.test(input[i])) {
-            i++;
+        if (/^\s/.test(remaining)) {
+            index++;
             continue;
         }
 
-        const remaining = input.slice(i);
-        const numberMatch = remaining.match(/^(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?/);
+        const number = remaining.match(/^(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?/i);
 
-        if (numberMatch) {
-            tokens.push({ type: "number", value: Number(numberMatch[0]) });
-            i += numberMatch[0].length;
+        if (number) {
+            tokens.push({ type: "number", value: Number(number[0]) });
+            index += number[0].length;
             continue;
         }
 
-        const wordMatch = remaining.match(/^[A-Za-z]+/);
+        const word = remaining.match(/^[a-z]+/i);
 
-        if (wordMatch) {
-            tokens.push({ type: "word", value: wordMatch[0].toLowerCase() });
-            i += wordMatch[0].length;
+        if (word) {
+            tokens.push({ type: "word", value: word[0].toLowerCase() });
+            index += word[0].length;
             continue;
         }
 
-        const char = input[i];
+        const character = input[index];
 
-        if ("+-*/^()%!".includes(char)) {
-            tokens.push({ type: char, value: char });
-            i++;
+        if ("+-*/^()%!".includes(character)) {
+            tokens.push({ type: character, value: character });
+            index++;
             continue;
         }
 
         throw new Error("Invalid character");
     }
 
-    return tokens;
+    // Add implicit multiplication, such as 2pi, 2(3+4), and 2sin(30).
+    const expanded = [];
+
+    for (let i = 0; i < tokens.length; i++) {
+        const current = tokens[i];
+        const previous = expanded[expanded.length - 1];
+
+        if (
+            previous &&
+            (
+                previous.type === "number" ||
+                previous.type === ")" ||
+                previous.type === "!"
+            ) &&
+            (
+                current.type === "(" ||
+                current.type === "word"
+            )
+        ) {
+            expanded.push({ type: "*", value: "*" });
+        }
+
+        expanded.push(current);
+    }
+
+    return expanded;
 }
 
 function evaluate(input) {
@@ -98,13 +127,19 @@ function evaluate(input) {
         return tokens[position];
     }
 
-    function consume(type) {
-        const token = peek();
-        if (!token || token.type !== type) {
-            throw new Error("Unexpected expression");
+    function match(type) {
+        if (peek() && peek().type === type) {
+            position++;
+            return true;
         }
-        position++;
-        return token;
+
+        return false;
+    }
+
+    function require(type) {
+        if (!match(type)) {
+            throw new Error("Incomplete expression");
+        }
     }
 
     function parseExpression() {
@@ -113,7 +148,10 @@ function evaluate(input) {
         while (peek() && ["+", "-"].includes(peek().type)) {
             const operator = tokens[position++].type;
             const right = parseTerm();
-            value = operator === "+" ? value + right : value - right;
+
+            value = operator === "+"
+                ? value + right
+                : value - right;
         }
 
         return value;
@@ -126,7 +164,7 @@ function evaluate(input) {
             const operator = tokens[position++].type;
             const right = parseUnary();
 
-            if (operator === "/" && right === 0) {
+            if ((operator === "/" || operator === "%") && right === 0) {
                 throw new Error("Division by zero");
             }
 
@@ -139,36 +177,31 @@ function evaluate(input) {
     }
 
     function parseUnary() {
-        if (peek() && peek().type === "+") {
-            position++;
-            return parseUnary();
-        }
-
-        if (peek() && peek().type === "-") {
-            position++;
-            return -parseUnary();
-        }
+        if (match("+")) return parseUnary();
+        if (match("-")) return -parseUnary();
 
         return parsePower();
     }
 
     function parsePower() {
-        let value = parsePostfix();
+        const base = parsePostfix();
 
-        if (peek() && peek().type === "^") {
-            position++;
-            value = Math.pow(value, parseUnary());
+        if (match("^")) {
+            return Math.pow(base, parseUnary());
         }
 
-        return value;
+        return base;
     }
 
     function parsePostfix() {
         let value = parsePrimary();
 
-        while (peek() && peek().type === "!") {
-            position++;
-            value = factorial(value);
+        while (peek() && (peek().type === "!" || peek().type === "%")) {
+            const operator = tokens[position++].type;
+
+            value = operator === "!"
+                ? factorial(value)
+                : value / 100;
         }
 
         return value;
@@ -177,17 +210,18 @@ function evaluate(input) {
     function parsePrimary() {
         const token = peek();
 
-        if (!token) throw new Error("Incomplete expression");
+        if (!token) {
+            throw new Error("Incomplete expression");
+        }
 
         if (token.type === "number") {
             position++;
             return token.value;
         }
 
-        if (token.type === "(") {
-            position++;
+        if (match("(")) {
             const value = parseExpression();
-            consume(")");
+            require(")");
             return value;
         }
 
@@ -208,18 +242,26 @@ function evaluate(input) {
                 ln: Math.log
             };
 
-            if (!functions[name]) throw new Error("Unknown function");
+            if (!functions[name]) {
+                throw new Error("Unknown function");
+            }
 
-            consume("(");
+            require("(");
             const argument = parseExpression();
-            consume(")");
+            require(")");
 
             if (name === "sin" || name === "cos" || name === "tan") {
                 const angle = angleMode === "DEG"
                     ? argument * Math.PI / 180
                     : argument;
 
-                return functions[name](angle);
+                if (name === "tan" && Math.abs(Math.cos(angle)) < 1e-12) {
+                    throw new Error("Undefined tangent");
+                }
+
+                const result = functions[name](angle);
+
+                return Math.abs(result) < 1e-12 ? 0 : result;
             }
 
             if (name === "sqrt" && argument < 0) {
@@ -236,7 +278,7 @@ function evaluate(input) {
         throw new Error("Invalid expression");
     }
 
-    if (tokens.length === 0) return 0;
+    if (!tokens.length) return 0;
 
     const result = parseExpression();
 
@@ -264,38 +306,43 @@ function calculate() {
         lastAnswer = answer;
 
         history.unshift({
-            expression,
+            expression: expression,
             result: formatted
         });
 
         history = history.slice(0, 10);
         renderHistory();
+
         expression = formatted;
         updateDisplay();
     } catch (error) {
         resultDisplay.textContent = "Error";
+        console.error("Calculator error:", error);
     }
 }
 
 function renderHistory() {
+    historyList.replaceChildren();
+
     if (!history.length) {
-        historyList.innerHTML = '<p class="empty-history">Your calculations will appear here.</p>';
+        const empty = document.createElement("p");
+        empty.className = "empty-history";
+        empty.textContent = "Your calculations will appear here.";
+        historyList.appendChild(empty);
         return;
     }
-
-    historyList.innerHTML = "";
 
     history.forEach(item => {
         const row = document.createElement("div");
         row.className = "history-item";
 
-        const expressionText = document.createElement("span");
-        expressionText.textContent = item.expression + " =";
+        const left = document.createElement("span");
+        left.textContent = item.expression + " =";
 
-        const resultText = document.createElement("span");
-        resultText.textContent = item.result;
+        const right = document.createElement("span");
+        right.textContent = item.result;
 
-        row.append(expressionText, resultText);
+        row.append(left, right);
         historyList.appendChild(row);
     });
 }
@@ -314,17 +361,20 @@ document.querySelectorAll(".key").forEach(button => {
             case "clear":
                 clearAll();
                 break;
+
             case "delete":
                 deleteLast();
                 break;
+
             case "calculate":
                 calculate();
                 break;
+
             case "angle":
                 angleMode = angleMode === "DEG" ? "RAD" : "DEG";
-                button.textContent = angleMode;
                 updateDisplay();
                 break;
+
             case "ans":
                 insertValue("ans");
                 break;
@@ -342,9 +392,11 @@ document.getElementById("clearHistory").addEventListener("click", () => {
 });
 
 document.addEventListener("keydown", event => {
+    if (event.ctrlKey || event.altKey || event.metaKey) return;
+
     if (/^[0-9.]$/.test(event.key)) {
         insertValue(event.key);
-    } else if (["+", "-", "*", "/", "^", "(", ")", "%", "!"].includes(event.key)) {
+    } else if ("+-*/^()%!".includes(event.key)) {
         insertValue(event.key);
     } else if (event.key === "Enter" || event.key === "=") {
         event.preventDefault();
