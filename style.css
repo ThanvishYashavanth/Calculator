@@ -1,0 +1,350 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+    --bg: #0b0e19;
+    --panel: #14192b;
+    --panel-light: #1c2338;
+    --text: #f3f5ff;
+    --muted: #929bb5;
+    --accent: #8b7cff;
+    --accent-light: #b0a5ff;
+    --border: rgba(255,255,255,.08);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(ellipse at 15% 10%, rgba(105,83,255,.17), transparent 35%),
+        radial-gradient(ellipse at 85% 85%, rgba(35,153,194,.10), transparent 35%),
+        var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+}
+
+button {
+    font: inherit;
+}
+
+.app {
+    width: min(1100px, 92%);
+    margin: auto;
+}
+
+.topbar {
+    height: 85px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: var(--text);
+    font: 700 23px 'Space Grotesk', sans-serif;
+    text-decoration: none;
+}
+
+.brand-icon {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    color: white;
+    background: linear-gradient(135deg, #9a87ff, #6652dc);
+}
+
+.brand-light {
+    color: var(--accent-light);
+}
+
+.version, .eyebrow, .calculator-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--muted);
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 440px;
+    align-items: center;
+    gap: 65px;
+    padding: 65px 0;
+}
+
+.intro .eyebrow {
+    color: var(--accent-light);
+    margin-bottom: 20px;
+}
+
+.intro h1 {
+    font: 700 clamp(38px, 5vw, 57px)/1.12 'Space Grotesk', sans-serif;
+    letter-spacing: -2px;
+}
+
+.intro h1 span {
+    color: var(--accent-light);
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.8;
+    max-width: 350px;
+    margin-top: 22px;
+}
+
+.calculator {
+    background: linear-gradient(145deg, #191f34, #111627);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 25px;
+    padding: 22px;
+    box-shadow: 0 25px 80px rgba(0,0,0,.4);
+}
+
+.calculator-header, .history-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.calculator-label {
+    font-size: 9px;
+}
+
+.mode {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.icon-button {
+    width: 37px;
+    height: 37px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--panel-light);
+    color: var(--text);
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.display {
+    margin: 20px 0;
+    min-height: 125px;
+    background: rgba(4,8,19,.55);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 17px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    overflow: hidden;
+}
+
+.display-meta {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.expression {
+    color: var(--muted);
+    font-size: 15px;
+    min-height: 25px;
+    margin-top: 8px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    text-align: right;
+}
+
+.result {
+    font: 600 34px 'Space Grotesk', sans-serif;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 9px;
+}
+
+.key {
+    min-height: 49px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: var(--panel-light);
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .18s ease;
+}
+
+.key:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.2);
+}
+
+.key:active {
+    transform: scale(.96);
+}
+
+.key.utility {
+    background: #29304a;
+    color: #d5d9ee;
+}
+
+.key.scientific {
+    background: rgba(139,124,255,.12);
+    color: var(--accent-light);
+    font-size: 13px;
+}
+
+.key.operator {
+    background: rgba(139,124,255,.2);
+    color: var(--accent-light);
+    font-size: 19px;
+}
+
+.key.equals {
+    grid-column: span 2;
+    background: linear-gradient(135deg, #a294ff, #705ce7);
+    color: white;
+    font-size: 23px;
+}
+
+.history-panel {
+    margin-top: 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+}
+
+.hidden {
+    display: none;
+}
+
+.history-heading h2 {
+    font-size: 13px;
+}
+
+.text-button {
+    border: 0;
+    background: transparent;
+    color: var(--accent-light);
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.history-list {
+    max-height: 150px;
+    overflow-y: auto;
+    margin-top: 12px;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+}
+
+.history-item span:first-child {
+    color: var(--muted);
+    overflow-wrap: anywhere;
+}
+
+.history-item span:last-child {
+    color: var(--accent-light);
+    font-weight: 700;
+}
+
+.empty-history {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.calculator-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 18px;
+    padding-top: 13px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.page-footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    padding: 20px 0 30px;
+}
+
+@media (max-width: 850px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        gap: 35px;
+        max-width: 480px;
+        margin: auto;
+        padding: 45px 0;
+    }
+
+    .intro h1 {
+        font-size: 42px;
+    }
+
+    .subtitle {
+        margin-top: 14px;
+    }
+}
+
+@media (max-width: 420px) {
+    .app {
+        width: 94%;
+    }
+
+    .calculator {
+        padding: 14px;
+        border-radius: 19px;
+    }
+
+    .controls {
+        gap: 6px;
+    }
+
+    .key {
+        min-height: 45px;
+        border-radius: 9px;
+        font-size: 13px;
+    }
+
+    .key.scientific {
+        font-size: 11px;
+    }
+
+    .result {
+        font-size: 29px;
+    }
+
+    .version {
+        font-size: 8px;
+    }
+}

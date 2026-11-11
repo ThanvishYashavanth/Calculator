@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nova Calculator - A modern scientific calculator built with HTML, CSS and JavaScript.">
+    <meta name="theme-color" content="#101323">
+    <title>Nova Calculator | Scientific Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <header class="topbar">
+            <a class="brand" href="#" aria-label="Nova Calculator home">
+                <span class="brand-icon">N</span>
+                <span>nova<span class="brand-light">calc</span></span>
+            </a>
+            <span class="version">SCIENTIFIC EDITION</span>
+        </header>
+
+        <main class="main-content">
+            <section class="intro">
+                <p class="eyebrow">SMARTER CALCULATIONS</p>
+                <h1>Your calculations,<br><span>simplified.</span></h1>
+                <p class="subtitle">A clean, powerful calculator for everyday and scientific calculations.</p>
+            </section>
+
+            <section class="calculator" aria-label="Calculator">
+                <div class="calculator-header">
+                    <div>
+                        <span class="calculator-label">CALCULATOR</span>
+                        <div class="mode">Scientific mode</div>
+                    </div>
+                    <button id="historyToggle" class="icon-button" aria-label="Toggle history" title="History">↶</button>
+                </div>
+
+                <div class="display">
+                    <div class="display-meta">
+                        <span id="angleMode">DEG</span>
+                        <span id="expressionPreview"></span>
+                    </div>
+                    <div id="expression" class="expression" aria-label="Expression"></div>
+                    <div id="result" class="result" aria-live="polite">0</div>
+                </div>
+
+                <div class="controls">
+                    <button class="key utility" data-action="angle">DEG</button>
+                    <button class="key utility" data-action="clear">AC</button>
+                    <button class="key utility" data-action="delete">DEL</button>
+                    <button class="key utility" data-value="(">(</button>
+                    <button class="key utility" data-value=")">)</button>
+
+                    <button class="key scientific" data-value="sin(">sin</button>
+                    <button class="key scientific" data-value="cos(">cos</button>
+                    <button class="key scientific" data-value="tan(">tan</button>
+                    <button class="key scientific" data-value="sqrt(">√</button>
+                    <button class="key scientific" data-value="^2">x²</button>
+
+                    <button class="key scientific" data-value="log(">log</button>
+                    <button class="key scientific" data-value="ln(">ln</button>
+                    <button class="key scientific" data-value="pi">π</button>
+                    <button class="key scientific" data-value="e">e</button>
+                    <button class="key scientific" data-value="^">xʸ</button>
+
+                    <button class="key number" data-value="7">7</button>
+                    <button class="key number" data-value="8">8</button>
+                    <button class="key number" data-value="9">9</button>
+                    <button class="key operator" data-value="/">÷</button>
+                    <button class="key operator" data-value="%">%</button>
+
+                    <button class="key number" data-value="4">4</button>
+                    <button class="key number" data-value="5">5</button>
+                    <button class="key number" data-value="6">6</button>
+                    <button class="key operator" data-value="*">×</button>
+                    <button class="key operator" data-value="!">x!</button>
+
+                    <button class="key number" data-value="1">1</button>
+                    <button class="key number" data-value="2">2</button>
+                    <button class="key number" data-value="3">3</button>
+                    <button class="key operator" data-value="-">−</button>
+                    <button class="key operator" data-value="+">+</button>
+
+                    <button class="key number" data-value="0">0</button>
+                    <button class="key number" data-value=".">.</button>
+                    <button class="key utility" data-action="ans">Ans</button>
+                    <button class="key equals" data-action="calculate">=</button>
+                </div>
+
+                <div id="historyPanel" class="history-panel hidden">
+                    <div class="history-heading">
+                        <h2>Recent calculations</h2>
+                        <button id="clearHistory" class="text-button">Clear</button>
+                    </div>
+                    <div id="historyList" class="history-list">
+                        <p class="empty-history">Your calculations will appear here.</p>
+                    </div>
+                </div>
+
+                <footer class="calculator-footer">
+                    <span>Keyboard supported</span>
+                    <span>Made with precision ✦</span>
+                </footer>
+            </section>
+        </main>
+
+        <footer class="page-footer">
+            <p>© 2026 Nova Calculator. Built with HTML, CSS & JavaScript.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
